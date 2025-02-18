@@ -28,15 +28,15 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names: Julian Pearson Rickenbach and Mark Yuzon</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://github.com/cal-cs184-student/hw-webpages-tarnish">cs184.eecs.berkeley.edu/sp25</a>
 		
 		<br>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw1-tarnish">cs184.eecs.berkeley.edu/sp25</a>
 
 		<figure>
 			<img src="lion.jpg" alt="Lion" style="width:50%"/>
@@ -51,9 +51,39 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
+		The way we rasterize a triangle is split up into two steps. First, we initialize all the static variables we need. This includes our line tangent vectors , line normals and our bounding box. Second, we iterate through all pixels in the bounding box, get their center point coordinates, and perform the three-line tests. The line tests consist of first calculating the vector V, which is the vector pointing from the originating vertex of the line to the sample point. Then we take the dot product of V and N. If this value is greater than or equal to 0 then the point lies on or above the line. Finally, we take the boolean AND of all three line tests. This equates to true iff. The point is inside (or on a line of) the triangle if the points are given in counter clockwise winding order. To make this work easily for clockwise winding order as well, we can simply change our boolean expression to be the OR of two expressions. On the left side of the OR is our original CCW winding order boolean expression. On the right side of the OR we put the AND of the negations of the three test booleans. This second boolean expression is basically doing the same line test for clockwise winding order for almost free. 
+		Our algorithm is no worse than one that checks only samples within the bounding box because our algorithm does exactly that. We calculate the bounding box by finding the minimum and maximum x and y coordinates of the triangle’s vertices. Using those values, we set the start and end points of the outer and inner for loops when iterating over the sample points. 
+
+
+		<p>Here’s a screenshot of basic/test4.svg with the pixel inspector looking at an interesting artifact of our course sampling rate:</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="svg/basic/test4.svg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="svg/basic/test4.svg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="svg/basic/test4.svg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="svg/basic/test4.svg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		
+		<h2>Task 2: Antialiasing by Supersampling</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -78,25 +108,95 @@
 			  </tr>
 			</table>
 		</div>
-		
-		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
 
 		<h2>Task 3: Transforms</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="lion.jpg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			</table>
+		</div>
 
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Barycentric coordinates is a coordinate scheme that uses the vertices of a triangle as guideposts. The key rule of barycentric coordinates is that alpha plus beta plus gamma equals one. This also implies that barycentric coordinates only make sense inside of a triangle because if you are outside these numbers might be negative or add to greater than 1. You get each coordinate value by taking the ratio of the given point’s distance to the vertex divided by that vertex’s minimum distance to the opposite edge of the triangle. 
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="lion.jpg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			</table>
+		</div>
+
+
 
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		To figure out what the color should be at a certain pixel in the framebuffer, we need to sample a color from our little geometric universe that we defined. More technically, for each triangle that we rasterize, we find all pixels that it overlaps with and perform some sampling operation. Starting from Task 4 we began to calculate the barycentric coordinate of each pixel with respect to the triangle’s vertices. And further, we used this barycentric coordinate’s property of alpha + beta + gamma equals one to interpolate a value from each vertex. In Task 4 that was color and in Task 5 that was a 2D vector which represented a coordinate in an entirely different space! That being texture space, which ranges from (0,0) to (1,1). So, assuming we have a texture then we can transform a UV coordinate (which is continuous) to an integer coordinate of the texture to sample from. The fact that we are going from continuous 2D coordinates to integer texture coordinates is the entire point of texture mapping, since it implies a flexibility of how we do this. In fact, that was what this Task 5 was all about. 
+		The easier method is to scale UV’s entries to the width and height of the texture respectively and then round the resulting float to an int. This works and it’s called nearest filtering. The more challenging method with usually better results is bilinear which does a weighted average of the 4 nearest integer coordinates based on the distance between the scaled floating point UV coordinate to the integer coordinates. 
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="img/map.jpg" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			</table>
+			<tr>
+				<td style="text-align: center;">
+				  <img src="img/map.png" width="400px"/>
+				  <figcaption>Caption goes here.</figcaption>
+				</td>
+			</table>
+		</div>
+
+		Going from top left to bottom right, we have nearest sample rate 1, nearest sample rate 16, bilinear sample rate 1, bilinear sample rate 16. In each screenshot the pixel inspector is showing the latitude line to the left of South Africa. Nearest filtering fails badly in this situation most likely because there’s not enough resolution on the screen to allow for pixels samples to hit that line in the texture map.  In other words it’s an aliasing artifact due to a higher rate of change in the signal (texture) compared to our sampling rate (the resolution of the area covered by the triangle). Super sampling helps nearest filtering a little but not enough. Bilinear filtering is where the quality significantly improves because bilinear is kind of like super sampling but on the scale of texture coordinates. The reason why 4x4 super sampling doesn’t help much for nearest filtering is that the pixel is still covering the same amount of area on the texture i.e. the pixels are too small relative to texture coordinates. 
+
+
 
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Level sampling is the method of creating a mipmap pyramid (or gaussian pyramid) which is a set of copies of your given texture, each a factor of 2 smaller than the last. This is preprocessed (including the downsampling at each mipmap level) and is an antialiasing technique that is pretty great for realtime applications because it costs ⅓ additional memory for that texture but bakes-in the downsampling–which we know is required for antialiasing. We used level sampling for texture mapping by selecting the correct mipmap level based on the approximate rate of change of UV coordinates with respect to the horizontal and vertical change in pixel location. 
+		The three sampling techniques now at our disposal are pixel sampling, level sampling and supersampling. Starting with supersampling, in our opinion this is the most powerful of all these techniques but comes with a huge computational cost and memory cost, but creates the best quality image. Level sampling is qualitatively quite good although it suffers from blurring on regions of high frequency signal in images. Overall though we think level sampling is a necessary measure for real time applications, although in practice we suspect it might be better to have a low upper limit on mipmap level to avoid an overly blurry image. We think that the blurring would be especially noticeable on scenes with distant horizons, so likely this technique works best in enclosed/indoor scenes. Lastly, pixel sampling is an absolute necessity for image quality. Specifically we believe that bilinear pixel sampling should be on by default although in certain applications, like retro-aesthetic games, nearest sampling may be desired. Bilinear pixel sampling also has very little memory costs and the computational complexity is not very high, only incurring a constant amount of work per pixel–and the same goes for level sampling. 
 
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="img/l_zero_p_nearest.png" width="400px"/>
+				  <figcaption>>???..</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="img/l_zero_p_linear.png" width="400px"/>
+				  <figcaption>???.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="img/l_nearest_p_nearest.png" width="400px"/>
+				  <figcaption>???.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="/img/l_zero_p_linear.png" width="400px"/>
+				  <figcaption>???.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<!--<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
+		//Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. -->
+
+
+		<!--
 		<h2>Additional Notes (please remove)</h2>
 		<ul>
 			<li>You can also add code if you'd like as so: <code>code code code</code></li>
@@ -107,6 +207,6 @@
 				</ul>
 			</li>
 		</ul>
-		</div>
+		</div> -->
 	</body>
 </html>
