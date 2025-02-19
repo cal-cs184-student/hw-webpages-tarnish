@@ -32,15 +32,15 @@
 
 		<br>
 
-		Link to webpage: <a href="https://github.com/cal-cs184-student/hw-webpages-tarnish">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://github.com/cal-cs184-student/hw-webpages-tarnish">TarnishGallery</a>
 		
 		<br>
 
-		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw1-tarnish">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184-student/sp25-hw1-tarnish">TarnishInventory</a>
 
 		<figure>
-			<img src="lion.jpg" alt="Lion" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
+			<img src="img/Rykard_Lord_of_Blasphemy.png" alt="Lion" style="width:50%"/>
+			<figcaption>!</figcaption>
 		</figure>
 
 		<!--
@@ -48,11 +48,11 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
-
+		
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		The way we rasterize a triangle is split up into two steps. First, we initialize all the static variables we need. This includes our line tangent vectors , line normals and our bounding box. Second, we iterate through all pixels in the bounding box, get their center point coordinates, and perform the three-line tests. The line tests consist of first calculating the vector V, which is the vector pointing from the originating vertex of the line to the sample point. Then we take the dot product of V and N. If this value is greater than or equal to 0 then the point lies on or above the line. Finally, we take the boolean AND of all three line tests. This equates to true iff. The point is inside (or on a line of) the triangle if the points are given in counter clockwise winding order. To make this work easily for clockwise winding order as well, we can simply change our boolean expression to be the OR of two expressions. On the left side of the OR is our original CCW winding order boolean expression. On the right side of the OR we put the AND of the negations of the three test booleans. This second boolean expression is basically doing the same line test for clockwise winding order for almost free. 
-		Our algorithm is no worse than one that checks only samples within the bounding box because our algorithm does exactly that. We calculate the bounding box by finding the minimum and maximum x and y coordinates of the triangle’s vertices. Using those values, we set the start and end points of the outer and inner for loops when iterating over the sample points. 
+		The way we rasterize a triangle is split up into two steps. First, we initialize all the static variables we need. This includes our line tangent vectors , line normals and our bounding box. Second, we iterate through all pixels in the bounding box, get their center point coordinates, and perform the three-line tests. The line tests consist of first calculating the vector V, which is the vector pointing from the originating vertex of the line to the sample point. Then we take the dot product of V and N. If this value is greater than or equal to 0 then the point lies on or above the line. Finally, we take the boolean AND of all three line tests. This equates to true iff. The point is inside (or on a line of) the triangle if the points are given in counter clockwise winding order. To make this work easily for clockwise winding order as well, we can simply change our boolean expression to be the OR of two expressions. On the left side of the OR is our original CCW winding order boolean expression. On the right side of the OR we put the AND of the negations of the three test booleans. This second boolean expression is basically doing the same line test for clockwise winding order for almost free. Our algorithm is no worse than one that checks only samples within the bounding box because our algorithm does exactly that. We calculate the bounding box by finding the minimum and maximum x and y coordinates of the triangle’s vertices. Using those values, we set the start and end points of the outer and inner for loops when iterating over the sample points.
+		
+		Here’s a screenshot of basic/test4.svg with the pixel inspector looking at an interesting artifact of our course sampling rate:
 
 
 		<p>Here’s a screenshot of basic/test4.svg with the pixel inspector looking at an interesting artifact of our course sampling rate:</p>
@@ -61,49 +61,40 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="svg/basic/test4.svg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption></figcaption>
 				</td>
-				<td style="text-align: center;">
-				  <img src="svg/basic/test4.svg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="svg/basic/test4.svg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="svg/basic/test4.svg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
 			</table>
 		</div>
 		
 		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Modifying our code to super sample was relatively straightforward. The double for loop that iterates over all pixels in the framebuffer, we replaced the code that performed the inside triangle test with another double for loop. This loop iterates over sample_rate many points inside of the area of the pixel, performing the inside triangle test at each location. To accommodate storing all this color data, we changed our code so that anywhere sample_buffer.resize(3 * width * height) was called, we added a factor of sample_rate to the new size. The trickiest part of this change was ensuring that whenever you access the sample_buffer, you calculate the index properly. We were using a function we wrote called fill_sample(x, y, color) which caused us headaches when debugging because it hid the fact that we were multiplying the sample offset by another factor of sample_rate, causing the image to duplicate itself horizontally. Finally, in the resolve_to_framebuffer() function, where before the code simply copied the value from the same x and y position of the framebuffer, we now sum the colors across the corresponding sample buffer entries and divide by the sample_rate which averages the color of the samples for that one pixel in the framebuffer. 
+	
+		Super-sampling is very useful because it's a straightforward approach to
+		antialiasing a raster  image. In class we learned that antialiasing usually comes 
+		down to sampling at a higher frequency, blurring, then downsampling. That’s 
+		exactly what we did here. In our case we do a  simple uniform blur (average) but 
+		we could just as well do a gaussian blur. 
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task2_1.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task2_2.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task2_3.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task2_4.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -111,27 +102,35 @@
 
 
 		<h2>Task 3: Transforms</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
+
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="svg/transforms/robot.svg" width="400px"/>
+				  <figcaption>Before.</figcaption>
 				</td>
+				<tr>
+					<td style="text-align: center;">
+					  <img src="svg/transforms/robot2.svg" width="400px"/>
+					  <figcaption>After.</figcaption>
+					</td>
 			</table>
 		</div>
 
 		<h2>Task 4: Barycentric coordinates</h2>
-		Barycentric coordinates is a coordinate scheme that uses the vertices of a triangle as guideposts. The key rule of barycentric coordinates is that alpha plus beta plus gamma equals one. This also implies that barycentric coordinates only make sense inside of a triangle because if you are outside these numbers might be negative or add to greater than 1. You get each coordinate value by taking the ratio of the given point’s distance to the vertex divided by that vertex’s minimum distance to the opposite edge of the triangle. 
-
+		Barycentric coordinates is a coordinate scheme that uses the vertices of a triangle as guideposts. The key rule of barycentric coordinates is that alpha plus beta plus gamma equals one. This also implies that barycentric coordinates only make sense inside of a triangle because if you are outside these numbers might be negative or add to greater than 1. You get each coordinate value by taking the ratio of the given point’s distance to the vertex divided by that vertex’s minimum distance to the opposite edge of the triangle. Below there is an image of the triangle clearly showing color interpolation at all points of the triangle using barycentric coordinates.	
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task4_1.png" width="400px"/>
+				  <figcaption>Before.</figcaption>
+				</td>
+				<tr>
+					<td style="text-align: center;">
+					  <img src="img/task4_2.png" width="400px"/>
+					  <figcaption>After.</figcaption>
 				</td>
 			</table>
 		</div>
@@ -146,15 +145,24 @@
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="img/map.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task5_1.png" width="400px"/>
+				  <figcaption>nearest sample rate 1</figcaption>
 				</td>
-			</table>
-			<tr>
 				<td style="text-align: center;">
-				  <img src="img/map.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="img/task5_2.png" width="400px"/>
+				  <figcaption>nearest sample rate 16</figcaption>
 				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="img/task5_3.png" width="400px"/>
+				  <figcaption>bilinear sample rate 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="img/task5_4.png" width="400px"/>
+				  <figcaption>bilinear sample rate 16</figcaption>
+				</td>
+			  </tr>
 			</table>
 		</div>
 
@@ -171,22 +179,22 @@
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="img/l_zero_p_nearest.png" width="400px"/>
-				  <figcaption>>???..</figcaption>
+				  <img src="img/l_nearest_p_linear.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="img/l_zero_p_linear.png" width="400px"/>
-				  <figcaption>???.</figcaption>
+				  <figcaption></figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="img/l_nearest_p_nearest.png" width="400px"/>
-				  <figcaption>???.</figcaption>
+				  <figcaption></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="/img/l_zero_p_linear.png" width="400px"/>
-				  <figcaption>???.</figcaption>
+				  <img src="img/l_zero_p_nearest.png" width="400px"/>
+				  <figcaption></figcaption>
 				</td>
 			  </tr>
 			</table>
