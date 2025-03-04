@@ -40,7 +40,7 @@
 
 		<figure>
 			<img src="teapot.png" alt="Teapot" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
+			<figcaption>Teapot!</figcaption>
 		</figure>
 
 		<!--
@@ -51,7 +51,7 @@
 		
 		<p>Our work for this project was to implement interpolation of smooth curves and surfaces from discrete points in space. Our implementation consisted of creating schemes from the half-edge data structure. From Geometric modeling, this project covers: half-edge data structure, de Casteljau algorithm, Bazier surfaces, Bazier curves. The past two weeks summed up to be some of the most fundamental data structures and algorithms for any 3D modeling programs and rending programs. For instance, Blender have notion of 3D bezier splines…  have data structures that represent manifold meshes composed of triangles and the ability to interpolate course meshes into smooth surfaces via subdivision schemes like loop subdivision. </p>
 		<p>What we implemented in this project is only a small fraction of the total capabilities of such applications. Completing this assignment gives us a newfound appreciation for the complexity and intricacy of these pieces of software. </p>
-		<p> </p>
+		<p>Having worked with triangle-soup style mesh data structures in personal projects, I’ve come to admire the simplicity and versatility of the halfedge mesh representation.  What would normally be a major headache with a plain triangle index array (i.e. traversing edges of a mesh) becomes possible with some relatively simple and elegant code.   </p>
 
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
@@ -59,23 +59,23 @@
 		De Casteljau’s algorithm works in recursive iterations. Each iteration gets the weighted average of each pair of consecutive points (parameterized by a t which varies from 0 to 1). Then you recursively apply this until you reach the base case which is when you have only one control point, which is a point on the Bezier Curve.
 		We implemented this by making a lerp helper function, then in the evalutateStep function we check the base case. If it’s not the base case, we loop through all pairs of points (being careful not to try this on the last point) and push the new interpolated points to a new list, and return that list.
 		
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>These images show each step / level of the evaluation from the original control points</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption> step 1.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption> step 2.</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption> step 3.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="teapot.png" width="400px"/>
