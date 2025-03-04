@@ -36,7 +36,7 @@
 
 		<br>
 		
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: (TODO) <a href="https://github.com/cal-cs184-student/sp25-hw2-zombies">https://github.com/cal-cs184-student/sp25-hw2-zombies</a>
 
 		<figure>
 			<img src="teapot.png" alt="Teapot" style="width:50%"/>
@@ -49,15 +49,37 @@
 
 		<h2>Overview</h2>
 		
-		<p>Our work for this project was to implement interpolation of smooth curves and surfaces from discrete points in space. Our implementation consisted of creating schemes from the half-edge data structure. From Geometric modeling, this project covers: half-edge data structure, de Casteljau algorithm, Bazier surfaces, Bazier curves. The past two weeks summed up to be some of the most fundamental data structures and algorithms for any 3D modeling programs and rending programs. For instance, Blender have notion of 3D bezier splines…  have data structures that represent manifold meshes composed of triangles and the ability to interpolate course meshes into smooth surfaces via subdivision schemes like loop subdivision. </p>
-		<p>What we implemented in this project is only a small fraction of the total capabilities of such applications. Completing this assignment gives us a newfound appreciation for the complexity and intricacy of these pieces of software. </p>
-		<p> </p>
+		<p>
+			Our work for this project was to implement interpolation of smooth curves and surfaces from discrete points in space. 
+			Our implementation consisted of creating schemes from the half-edge data structure. 
+			From Geometric modeling, this project covers: half-edge data structure, de Casteljau algorithm, Bazier surfaces, Bazier curves. 
+			The past two weeks summed up to be some of the most fundamental data structures and algorithms for any 3D modeling programs and rending programs. 
+			For instance, Blender have notion of 3D bezier splines…  have data structures that represent manifold meshes composed of triangles and the ability to 
+			interpolate course meshes into smooth surfaces via subdivision schemes like loop subdivision. 
+		</p>
+		<p>
+			What we implemented in this project is only a small fraction of the total capabilities of such applications. 
+			Completing this assignment gives us a newfound appreciation for the complexity and intricacy of these pieces of software. 
+		</p>
+		<p> 
+			Having worked with triangle-soup style mesh data structures in personal projects, 
+			I&#39;ve come to admire the simplicity and versatility of the halfedge mesh representation.  
+			What would normally be a major headache with a plain triangle index array (i.e. traversing edges of a mesh) 
+			becomes possible with some relatively simple and elegant code.  
+		</p>
 
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		De Casteljau’s algorithm works in recursive iterations. Each iteration gets the weighted average of each pair of consecutive points (parameterized by a t which varies from 0 to 1). Then you recursively apply this until you reach the base case which is when you have only one control point, which is a point on the Bezier Curve.
-		We implemented this by making a lerp helper function, then in the evalutateStep function we check the base case. If it’s not the base case, we loop through all pairs of points (being careful not to try this on the last point) and push the new interpolated points to a new list, and return that list.
+		<p>
+
+		</p>
+		De Casteljau&#39;s algorithm works in recursive iterations. Each iteration gets the weighted average of each pair 
+		of consecutive points (parameterized by a t which varies from 0 to 1). Then you recursively apply this until you 
+		reach the base case which is when you have only one control point, which is a point on the Bezier Curve.
+		We implemented this by making a lerp helper function, then in the evalutateStep function we check the base case. 
+		If it&#39;s not the base case, we loop through all pairs of points (being careful not to try this on the last point) 
+		and push the new interpolated points to a new list, and return that list.
 		
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -96,24 +118,142 @@
 		</div>
 
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			We can extend de Casteljau algorithm to Bezier surfaces by running the algorithm in two-passes, 
+			one for each parametric direction. In the first pass, we recursively interpolate each row between its 
+			points to reduce it to a single point, this is done in the u-direction. The second pass considers the 
+			v-direction, The resulting single points from task 1 form a control polygon, which we interpolate back 
+			to yield the final surface point. 
+		</p>
+		<p>
+			The implementation we wrote consisted of a lerp-helper function(), evaluate step(), evaluate1D(), evaluate(). 
+			The lerp-helper function() is similar to our original lerp function but this computes the linear 
+			interpolation between 3D points. From there, we implemented the evaluate step() which performs one iteration 
+			of de Casteljau&#39; algorithm. Evaluate1D() uses evaluate step() by recursivley calling it to assess a single 
+			Bezier curve. Given these two functions, we can use them in evaluate() to evaluate a point on a Bazier patch 
+			given u,v. We call evaluate1D() on the u-direction, then call evaluate1D() on the resulting points with v-direction.
+		</p>
+		<p>
+			Below is a screenshot of the teapot bezier patch model (bez/teapot.bez).
+		</p>
 
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			We implemented task 3 by iterating through all adjacent triangles and for each we traverse its 
+			half edges to get its 3 vertices, compute two vectors pointing from one vertex to the other two vertices. 
+			Using these vertices we calculate the normal with their cross product, and conveniently grab its area by 
+			taking the magnitude of the resultant to get the area of their parallelogram and scaling it by 0.5 to get the 
+			area of the triangle. We multiply the cross resultant by the area and append it to our list of vectors. 
+			After iterating, we sum these weighted normals in another loop, and finally we return the sum vector divided by its 
+			length to normalize. 
+		</p>
+		<p>
+			The two following images show the teapot with and without smoothly interpolated surface normals.
+		</p>
 
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			We first drew a before and after picture of what the triangles should look like and from this wrote 
+			down all properties that would need to be changed. For some of the properties we realized that they only 
+			should change under some conditions, for example points and faces don&#39; always need to change their halfedge.
+		</p>
+		<p>
+			Before anything, we check if the edge is a boundary and returns if true. After that we basically grab a 
+			reference to every point, face, and half edge in the two triangles joined by the edge. We name them with 
+			descriptive names like a, b, c, d for the vertices, ad, bc, etc for the half edges, and abc and cbd for the faces. 
+			This lets us keep track of the logic more easily. Finally, we reassign the pointers based on the visual logic in 
+			the homework spec and lecture slides.
+		</p>
+		<p>
+			Debugging was daunting at first, but the visual debugging tool showing all pointers for the half edges 
+			was very helpful. Especially helpful was the &#39;T&#39; key which got the selected halfedge&#39;s twin. 
+			From this we could deduce that the reason why sometimes faces were disappearing (causing gaps) was that 
+			we were not assigning the face pointers properly somewhere in the logic, and it lead us to the bug in our code. 
+			During this process we flipped a LOT of edges.
+		</p>
+		<p>
+			Here are some screenshots of before and after the edge flips:
+		</p>
+		
+		<p>
+			Our deubgging journey consisted of checking the teapot, and running the function "flip" multiple times. 
+			We did a sanity check based of the diagram and we realise we had a hole. Our main issue was that we did not 
+			update all of the facepointers in half edges. The debugging journey also consisted of re-writing a lot of 
+			variable names as we first initialized it as colors as per our diagram. [insert diagram here]. 
+			However, we had to change it to their descpcritive names mentioned above because it was hard to debug with 
+			color as variables. 
+		</p>
+
 
 		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			The first step in our implementation is, as always, to draw a picture. After this, it 
+			becomes apparent which new objects we needed to instantiate. In this cases, there are many! A total of 8 
+			new halfedges (2 of which can be reused), 4 new edges (1 of which can be reused), 4 new faces (2 of which reused) 
+			and one new point. As you know, it boils down to a bunch of reassignments of pointers. We reduces the 
+			copy and paste of redundant code by making a function that takes a halfedge and all properties of a halfedge, 
+			and assigns them. We actually didn&#39;t have to debug much because we thought it through really clearly the first 
+			time, and also we learned our lesson about not assigning faces to new halfedges from Task 4!
+		</p>
+		<p>
+			Here are some screenshots of edge splits in action:
+		</p>
+		<p>
+			And here are some screenshots of edge splits and flips in action together:
+		</p>
+		<p>
+			Our debugging journey was quite eventful. Like I mentioned earlier, we actually managed to 
+			almost one-shot this task! But, we did have a bug. It was immediately obvious what it was though, we 
+			forgot to set the new midpoint&#39;s position, so it defaulted to the origin. The screenshots below show how 
+			this looked on the teapot. This was a lucky case where debugging is easy. We also debugged a non-bug for a 
+			while because there appeared to be a bug with flipping a split edge. Turns out that it was just creating a very 
+			skinny triangle which looked like a bug, but was actually correct!
+		</p>
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			Our implementation of loop subdivision is as follows: first, we iterate over all vertices in the 
+			mesh and calculate where the vertices will be positioned, and iterate over all edges to calculate where 
+			the new midpoints will be positioned, according to the formulae. We then prepare for the split step by 
+			first storing a list of all edges that are in the original mesh. Now we perform the edge split step by 
+			iterating over the list of original edges and splitting them. Importantly, we ignore boundaries. Also vital, 
+			we flag each of the edges along the split and the midpoint to be new and the two edges that make up the original 
+			edge to be old. Proceeding onto the flip stage, we simply iterate over all edges and flip them on the conditions that 
+			they are new and they touch an old and a new vertex. The finishing touch is to iterate over all vertices and 
+			apply the calculated new positions.
+		</p>		
+		<p>
+			Our implementation feels very straightforward and so we feel there&#39;s no interesting implementation choices to 
+			speak of. However, we did have to get creative when it came to debugging. When figuring out which lines were 
+			causing infinite loops we wrapped sections of code with prints of &quot;checkpoint&quot; strings 
+			(i.e. &quot;Checkpoint 1&quot; and so on). This simple trick made finding the infinite loops a breeze. 
+			The more gnarly bugs (having to do with vertex positioning) were a bit trickier to sort out. 
+			All we could discern was that the faces were not the right shapes. Also adding to the difficulty was the fact 
+			that, because of the bug, the debug tools were not working properly. We would try to hover a primitive 
+			after subdividing only to find that a completely different primitive would get highlighted. All this told us 
+			is that something is very wrong with our code. Because the only issue was that the faces were malformed 
+			(but things were mostly working) we postulated that it was the calculation of vertex positions that was to blame 
+			for the bug. After more experimentation, we noticed that it looked like the original vertices looked to stay about 
+			the same, which led us to suspect the code responsible for calculating new vertex positions. Eventually 
+			we found the issue: using vertiex&#39;s halfedge reference to traverse the triangle, which is not good to 
+			do because we don&#39;t have any guarantee on which halfedge that will be. 
+		</p>
+		<p>
+			We noticed that sharp corners and edges smooth out and become rounded very quickly, more so than we expected it to. 
+			Here are some screenshots of smoothing on a sharp corner without any splits:
+		</p>
 
-		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			We kinda notice that when we pre-split, the slight difference in the smoothing of the edge tends to 
+			maintain the original shape of the sharp edges within the earlier frames. By pre-splitting before we run 
+			loop-division we encounter more original vertices, which helps maintain the shape of the sharp edges in the 
+			earlier frames. However, by running the loop-division more times, we lose this structure. As an example, we 
+			take the same sharp edge and pre-split it. You may see more edges within the pointy edge in comparison to the 
+			images above. When we run loop-division on this. The size and shape of the structure is maintained. 
+			In juxtaposition, the image above display a change in size, and structure.
+		</p>
 
 		
 		</div>
