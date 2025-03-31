@@ -24,6 +24,33 @@
 				font-family: 'Inter', sans-serif;
 			}
 		</style>
+
+		<style>
+			body {
+			  font-family: Arial, sans-serif;
+			  padding: 20px;
+			}
+		
+			table {
+			  border-collapse: collapse;
+			  width: 100%;
+			  max-width: 700px;
+			}
+		
+			th, td {
+			  border: 1px solid #000;
+			  padding: 12px;
+			  text-align: left;
+			}
+		
+			th {
+			  background-color: #f2f2f2;
+			}
+		
+			tr:nth-child(even) td {
+			  background-color: #fafafa;
+			}
+		  </style>
 	</head>
 	<body>
 		<div class="container">
@@ -65,17 +92,33 @@
 			</p>
 
 			<p>
-				Of course the image wouldn’t be very interesting if the rays didn’t collide and reflect off of objects in the world. This requires at least implementing triangle and sphere intersection tests for a scene with only triangles and spheres. [add something here about “primitive intersection part of the pipeline”]
+				Of course the image would not be very interesting if the rays did not collide and reflect off of objects in the world. This requires at least implementing triangle and sphere intersection tests for a scene with only triangles and spheres. add something here about primitive intersection part of the pipeline
 			</p>
 
 			</div>
 		<h3>Triangle Intersection Algorithm</h3>
 			<p>
-				The triangle intersection we implemented has two steps: first, do a plane-intersection test, then do an inside-triangle test. The plane-intersection test is fairly simple. We have an equation that defines all points that lie on a plane, which is describable as the set of all points for which the dot product of its difference with a known point on the plane and the plane’s normal vector is zero. So, to find if the ray intersects the plane, we plug in the ray equation to the “point” in the set notation description of the plane, and solve for the parameter t. If this t is a valid value, i.e. is within the range defined by the near and far clip planes, then we have an intersection! 
+				The triangle intersection we implemented has two steps: first, do a plane-intersection test, then do an inside-triangle test. 
+				The plane-intersection test is fairly simple. 
+				We have an equation that defines all points that lie on a plane, 
+				which is describable as the set of all points for which the dot product of its 
+				difference with a known point on the plane and the planes normal vector is zero. 
+				So, to find if the ray intersects the plane, we plug in the ray equation to the point in the set notation description of the plane, 
+				and solve for the parameter t. If this t is a valid value, i.e. is within the range defined by the near and far clip planes, 
+				then we have an intersection! 
 
 			</p>
 			<p>
-				If we have an intersection, then we continue on to part 2: the inside-triangle test. This logic is almost identical to the logic for rasterizing triangles in 2D as we did in the first homework of this class. The same logic applies seamlessly to 3D, if you are careful. The main difference is how you calculate the vectors that are normal to each line segment. In 2D this was simply (-y, x) but in 3D we figured out a very simple way which is to take the cross product of the line segment and the triangle face normal. Since those two vectors are already perpendicular, the resultant is perpendicular to them both, forcing it onto the triangle’s plane while maintaining the perpendicularity to the line tangent. Interpolating point normals is done with barycentric coordinates the same as homework 1, except that the same care is taken to make sure we’re on the triangle plane.
+				If we have an intersection, then we continue on to part 2: the inside-triangle test. 
+				This logic is almost identical to the logic for rasterizing triangles 
+				in 2D as we did in the first homework of this class. 
+				The same logic applies seamlessly to 3D, if you are careful. 
+				The main difference is how you calculate the vectors that are normal to each line segment. 
+				In 2D this was simply (-y, x) but in 3D we figured out a very simple way which is to take the cross product of 
+				the line segment and the triangle face normal. Since those two vectors are already perpendicular, 
+				the resultant is perpendicular to them both, forcing it onto the triangles plane while maintaining the perpendicularity 
+				to the line tangent. Interpolating point normals is done with barycentric coordinates the same as homework 1, 
+				except that the same care is taken to make sure were on the triangle plane.
 			</p>
 		<h3>Images with normal shading</h3>
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -129,7 +172,32 @@
 		Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration.
 	</h4>
 	<div style="display: flex; flex-direction: column; align-items: center;">
-		<img src="images/writeup_part2_table.png" width="400px"/>
+		<table>
+			<tr>
+			  <th>Scene</th>
+			  <th>No BVH acceleration</th>
+			  <th>With BVH acceleration</th>
+			  <th>Speedup</th>
+			</tr>
+			<tr>
+			  <td>cow 6k primitives</td>
+			  <td>7 s</td>
+			  <td>0.05 s</td>
+			  <td>140x</td>
+			</tr>
+			<tr>
+			  <td>bunny (unlit) 33k primitives</td>
+			  <td>16 s</td>
+			  <td>0.04 s</td>
+			  <td>400x</td>
+			</tr>
+			<tr>
+			  <td>beast 64k primitives</td>
+			  <td>64 s</td>
+			  <td>0.04 s</td>
+			  <td>1600x</td>
+			</tr>
+		  </table>
 	</div>
 	<p>
 		All tests were done with 8 threads on Apple M2 Pro, only normal debug lighting with 800x600 px image resolution. These results are pretty stunning. While the time complexity of these renderings is increasing exponentially with respect to scene complexity without BVH, with BVH acceleration the render time is practically constant–and instantaneous! I was so surprised that I had to justify to myself why this incredible speedup occurs. We know we have to send at least one ray per pixel which is about 500,000 rays per image. If each of those rays has to check intersection with every primitive, then the complexity is immense i.e. roughly 32 billion intersection tests overall for beast.dae which has 64,000 primitives. If we assume we are reducing the number of intersection tests per ray to log(n) then this naive rough figure becomes 2.4 million. I think these back of the napkin calculations are fairly inaccurate because they don’t line up with the statistics returned by our pathtracer, but they give a sense of the magnitude of the effect of bounding volume hierarchies on accelerating the computation task. We can see why this data structure is necessary for any pathtracing program. 
@@ -211,31 +279,7 @@
 		<p>
 			In short, hemisphere sampling results in noisier image quality compared to importance sampling. The reason for this is that with uniform hemisphere sampling, the samples are taken at an equal probability in all directions whereas importance sampling takes more samples from the directions of light sources–which for direct lighting is the only kind of sample that contributes any color. Basically, hemisphere sampling is going to get a lot of rays that add zero (black) to the color for that pixel. This means many more samples must be taken to produce a less-noisy image. Importance sampling makes the simplification of sampling mostly from the directions of light sources and down-scaling the impact of such “likely” samples. 
 		</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_1.png" width="400px"/>
-				  <figcaption>Normal rendered Image.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_1_rate.png" width="400px"/>
-				  <figcaption>Sampling rate Image.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_2.png" width="400px"/>
-				  <figcaption>Normal rendered Image.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_2_rate.png" width="400px"/>
-				  <figcaption>Sampling rate Image.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>			
-		
+				
 		<h2>Part 4: Global Illumination</h2>
 		<h3>Indirect Lighting Function</h3>
 		<p>
@@ -247,11 +291,11 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/writeup_part4_1.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>CBspheres_lambertian.dae.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/writeup_part4_2.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>CBbunny.dae.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -262,11 +306,11 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/writeup_part4_3.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>direct lighting onl.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/writeup_part4_4.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <figcaption>indirect lighting only.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -348,6 +392,46 @@
 			In the 2nd and 3rd bounces of light we can see that they contribute a lot of overall brightness to the scene, and this effect continues for the rest of the bounces, although each bounce has a diminished effect. In addition to overall brightness, we can see that the bounces after the first contribute a lot of the reflected color around the scene, for example the bunny’s left side has the red glow of the left wall and its right side has a blue glow from the right wall. The overall effect is a far more realistic visual compared to direct lighting and rasterized rendering. 
 		</p>
 
+		<h4>
+			For CBbunny.dae, output the Russian Roulette rendering with max_ray_depth set to 0, 1, 2, 3, 4, and 100(the -m flag). Use 1024 samples per pixel.
+		</h4>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				<figcaption>isAccumBounces=false.</figcaption>
+				  <img src="images/writeup_part4_6_0.png" width="400px"/>
+				  <figcaption>m = 0 .</figcaption>
+				</td>
+				<td style="text-align: center;">
+				<figcaption>isAccumBounces=true.</figcaption>
+				  <img src="images/writeup_part4_6_1.png" width="400px"/>
+				  <figcaption>m = 1 .</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_6_2.png" width="400px"/>
+				  <figcaption>m = 2.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_6_3.png" width="400px"/>
+				  <figcaption>m = 3.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_6_4.png" width="400px"/>
+				  <figcaption>m = 4.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_6_100.png" width="400px"/>
+				  <figcaption>m = 100.</figcaption>
+				</td>
+			  </tr>
+			</table>
+
+
 		<h2>Part 5: Adaptive Sampling</h2>
 		<h3>Adaptive sampling</h3>
 		<div>
@@ -381,6 +465,87 @@
 			</table>
 		</div>			
 		</div>		
+
+		<h4>
+			Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
+		</h4>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				<figcaption>isAccumBounces=false.</figcaption>
+				  <img src="images/writeup_part4_7_1.png" width="400px"/>
+				  <figcaption>m = 0 .</figcaption>
+				</td>
+				<td style="text-align: center;">
+				<figcaption>isAccumBounces=true.</figcaption>
+				  <img src="images/writeup_part4_7_2.png" width="400px"/>
+				  <figcaption>m = 1 .</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_7_4.png" width="400px"/>
+				  <figcaption>m = 2.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_7_8.png" width="400px"/>
+				  <figcaption>m = 3.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_7_16.png" width="400px"/>
+				  <figcaption>m = 4.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part4_7_64.png" width="400px"/>
+				  <figcaption>m = 64.</figcaption>
+				</td>
+			  </tr>
+			  <td style="text-align: center;">
+				<img src="images/writeup_part4_7_1024.png" width="400px"/>
+				<figcaption>m = 1024.</figcaption>
+			  </td>
+			</table>
+			<p>
+				We can see that at low sample rates the noise is extremely noticeable. At each doubling of sampling rate per pixel we can see a significant drop in noise to signal ratio–visually– and at 64 samples per pixel the noise level becomes tolerable to the eye (this could be close to a film grain effect). At 1024 samples per pixel this image appears practically noiseless from a distant viewing although it still exists if you look at individual pixels.  
+			</p>
+
+
+		<h2>Part 5: Adaptive Sampling</h2>
+		<h3>Adaptive sampling</h3>
+		<div>
+		<p>
+			Adaptive sampling is the practice of not sampling a pixel with more ray traced samples if the pixel’s value is already close enough to the value it’s predicted to converge to. This approach takes advantage of the statistical concepts of variance and confidence. We can use the computed variance and mean of the current sample distribution to determine if we are in the 95% confidence for the sample. When we’re in that interval, we terminate early, saving computation. 
+			Adaptive sampling was actually very straightforward for us to implement. In the raytrace-pixel function we keep a running total s1 and s2. For each sample we measure, we add the illuminance of that sample to s1 and its square to s2. Then we run a “confidence” or “good enough” test after every samplesPerBatch many samples. We compute the variance I from the homework specification and terminate early if I is less than the max tolerance times the mean. 
+		</p>
+		</div>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part5_1.png" width="400px"/>
+				  <figcaption>Normal Render.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part5_1_rate.png" width="400px"/>
+				  <figcaption>Sampling rate Image.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part5_2.png" width="400px"/>
+				  <figcaption>Normal Render.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="images/writeup_part5_2_rate.png" width="400px"/>
+				  <figcaption>Sampling rate Image.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>			
+		</div>	
 	
 	</body>
 	</div>
