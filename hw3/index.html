@@ -432,40 +432,6 @@
 			</table>
 
 
-		<h2>Part 5: Adaptive Sampling</h2>
-		<h3>Adaptive sampling</h3>
-		<div>
-		<p>
-			Adaptive sampling is the practice of not sampling a pixel with more ray traced samples if the pixel’s value is already close enough to the value it’s predicted to converge to. This approach takes advantage of the statistical concepts of variance and confidence. We can use the computed variance and mean of the current sample distribution to determine if we are in the 95% confidence for the sample. When we’re in that interval, we terminate early, saving computation. 
-			Adaptive sampling was actually very straightforward for us to implement. In the raytrace-pixel function we keep a running total s1 and s2. For each sample we measure, we add the illuminance of that sample to s1 and its square to s2. Then we run a “confidence” or “good enough” test after every samplesPerBatch many samples. We compute the variance I from the homework specification and terminate early if I is less than the max tolerance times the mean. 
-		</p>
-		</div>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_1.png" width="400px"/>
-				  <figcaption>Normal Render.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_1_rate.png" width="400px"/>
-				  <figcaption>Sampling rate Image.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_2.png" width="400px"/>
-				  <figcaption>Normal Render.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="images/writeup_part5_2_rate.png" width="400px"/>
-				  <figcaption>Sampling rate Image.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>			
-		</div>		
-
 		<h4>
 			Pick one scene and compare rendered views with various sample-per-pixel rates, including at least 1, 2, 4, 8, 16, 64, and 1024. Use 4 light rays.
 		</h4>
