@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-	<style>
-			h1 {
-				text-align: center;
-			}
 
-			/* .container {
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+	<style>
+		h1 {
+			text-align: center;
+		}
+
+		/* .container {
 				margin: 0 auto;
 				padding: 60px 20%;
 			}
@@ -56,149 +57,163 @@
 		} */
 	</style>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS184 Final Project Proposal</title>
-	</head>
-	<body>
-		<h1 style="align-self:flex-end;">CS184 Final Project Proposal: FlockForce</h1>
-		<h2 style="text-align: center;">
-			A Compute Shader Powered Boid Simulation
-		</h2>
-		<p style="text-align:center">
-			By Julian Pearson Rickenbach, Mark Yuzon, Connor Armstrong, John Yoon
-		</p>
-		<p style="text-align:center">
-			Website link: 
-			<a href="https://cal-cs184-student.github.io/hw-webpages-tarnish/final-project-proposal/index.html">https://cal-cs184-student.github.io/hw-webpages-tarnish/final-project-proposal/index.html</a>
-		</p>
-		<h2>
-			Title, Summary and Team Members
-		</h2>
-		<p>
-			Team Members: Julian Pearson Rickenbach, Mark Yuzon, Connor Armstrong and John Yoon
-			<br> <br>
-			FlockForce is a project about making a GPU accelerated boid flocking 
-			simulation. We will utilize the parallel computation power 
-			of the GPU and exploit the data-level-parallelism of the 3D boids algorithm 
-			to speed up a CPU based boids simulation and hopefully increase the number 
-			of boids (particles) to hundreds of thousands or possibly millions. We will utilize the 
-			open-source Godot Game Engine to handle inputs, windowing, and rendering. 
-		</p>
-		<h2>
-			Problem Description
-		</h2>
-		<p>
-			Our chosen problem is the limited number of particles in a real-time-CPU-based boid
-				simulation. In order to create realistic and dynamic scenes involving large groups 
-				of flocking particles (birds, fish), it is necessary to use the GPU in order to perform 
-				the vast amount of calculations necessary to produce a realistic and visually pleasing simulation.
-			<br><br>
-			The challenge of this project lies in understanding the GPU's architecture, learning how to 
-			interface with the device (GPU) and give it instructions from the host (CPU). In addition to learning 
-			how to write effecient compute shaders, we will also need to consider which parts of our program 
-			are parallelizable, which is also a design problem in the sense that if we relax our program requirements 
-			we may be able to squeeze more simulatneous particles out of the GPU. Finally, we expect the 
-			artistic styling of the simulation to be a challenge, as it involves 3D modelling, animation, 
-			and rendering effects. 
-		</p>
-		<h2>
-			Goals and Deliverables
-		</h2>
-		<p>
-			The goal is to increase the number of boids in our simulation without dropping frames or 
-			losing visual fidelity. Either by offloading or parallelizing the boid simulation onto the GPU, 
-			the simulation can scale. The simulation can then produce large, dynamic scenes that remain 
-			responsive, and smooth. 
-			<br><br>
-			For our deliverable we will create a demo scene of the real time boids simulation in Godot engine, 
-			which should have at least an order of magnitude more boid particles than our CPU-based reference,
-			controlling for hardware. In addition we will supply a video of it working and instructions for 
-			how to use our written code. 
-			<br><br>	
-			To measure the performance of our program we plan on primarily using 
-			frames per seconds (FPS) statistics, frame time for CPU and GPU, number of active boid particles and 
-			likely more statistics related to GPU dispatch calls and current hardware resources (i.e. number 
-			of available GPGPU cores). 
-			<br><br>
-			More sepcifically, for FPS stats we plan on at least using average FPS, 
-			top 1% FPS, and bottom 1% FPS. For frame times we plan on measuring average frame time, CPU frame time, 
-			and GPU frame time all in milliseconds (we will be hoping to target less than 16.66ms per frame total 
-			which corresponds to 60 FPS). Further, we plan on judging the quality of our efforts by measuring 
-			the number of boids that can be spawned while maintaining 60 FPS and 30 FPS on some target hardware. 
-			We plan on testing these numbers on multiple hardware configurations including at least: 
-			Apple M1 Pro SOC, Apple M2 Pro SOC, and intel i9 12th gen + Nvidia 3080ti with 32 GB DDR5 memory. 
-			<br><br>
-			We plan to deliver a functioning 3D boids simulation that has all boid velocity updates running on the 
-			GPU via compute shaders. We plan on finding the answer of how many boids we can run on our given target 
-			hardware while maintaining interactivity (30 FPS minimum, 60 FPS ideally).
-			<br><br>
-			We hope to make our boids simulation more aesthetically pleasing if time permits. This includes: 
-			adding extra layers to the simulation for example wind forces, making interesting visual effects via 
-			fragment shaders. Also we hope to make our work more accessible by turning it into a 
-			plugin for open-source Godot game engine. 
-		</p>
-		<h2>
-			Schedule
-		</h2>
-		<h3>
-			Week 1:
-		</h3>
-		<p>
-			This will be the first time any of us are implementing compute shaders in any form. We expect this will 
-			take a bit of getting used to, both studying the documentation and planning how we will parallelize our 
-			simulation. We also plan to implement the boid simulation on the CPU this week, to serve as scaffolding 
-			for when we start to use compute shaders. This will act as a sanity check and performance benchmark 
-			for when we move the algorithm to the gpu in week 2.
-		</p>
-		<h3>
-			Week 2:
-		</h3>
-		<p>
-			This week we plan to expand on the work we did in week one to get boid simulation working with 
-			compute shaders. By this point we will have had some time to get used to programming compute shaders 
-			and  will troubleshoot the output with a simple scene in godot without any art assets.
-		</p>
-		<h3>
-			Week 3:
-		</h3>
-		<p>
-			Scene building: making 3D art assets i.e. the boids and the environment. In week three we will 
-			experiment with tuning the simulation to make it look as realistic as possible. We will design 
-			and source any art assets and build the scene in godot.
-		</p>
-		<h3>
-			Week 4:
-		</h3>
-		<p>
-			Polish + stretch goals + finish website: We expect that by this point something will have gone 
-			horribly wrong and will need fixing. To accommodate this we expect to have all the necessary parts of 
-			our project finished by the time week four begins. If by some miracle this turns out to be true we 
-			will continue to polish the scene. We want to make it large enough that you can really see the 
-			scale of the flocking behavior. We will play around with the art assets, and modify them so they 
-			best fit the scene. If time permits we will also add some other animated features to the scene to 
-			add to its dynamism, as well as possibly experimenting with other fragment shaders to add to the 
-			total look of our output. The other stretch goal we would like to accomplish is to build a godot 
-			plugin so our compute shaders could be seamlessly added to other projects and scenes.
-		</p>
-		<h2>
-			Resources
-		</h2>
-		<p>
-			<ul>
-				<li>Craig Reynolds Boids Article: <a href="https://www.red3d.com/cwr/boids/">https://www.red3d.com/cwr/boids/</a></li>
-				<li>navgen 3D boids simulation (archive): 
-					<a href="https://web.archive.org/web/20080205014305/http://www.navgen.com/3d_boids/">https://web.archive.org/web/20080205014305/http://www.navgen.com/3d_boids/</a>
-				</li>
-				<li>Lecture 17 Slides: 
-					<a href="https://cs184.eecs.berkeley.edu/sp25/assets/lectures/17-physical-simulation.pdf">https://cs184.eecs.berkeley.edu/sp25/assets/lectures/17-physical-simulation.pdf</a>
-				</li>
-				<li>Godot engine docs: 
-					<a href="https://docs.godotengine.org/en/latest/tutorials/shaders/compute_shaders.html">https://docs.godotengine.org/en/latest/tutorials/shaders/compute_shaders.html</a>
-				</li>
-				<li>Sebastian Lague boids video: 
-					<a href="https://www.youtube.com/watch?v=bqtqltqcQhw">https://www.youtube.com/watch?v=bqtqltqcQhw</a>
-				</li>
-			</ul>
-		</p>
-	</body>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CS184 Final Project Proposal</title>
+</head>
+
+<body>
+	<h1 style="align-self:flex-end;">CS184 Final Project Proposal: FlockForce</h1>
+	<h2 style="text-align: center;">
+		A Compute Shader Powered Boid Simulation
+	</h2>
+	<p style="text-align:center">
+		By Julian Pearson Rickenbach, Mark Yuzon, Connor Armstrong, John Yoon
+	</p>
+	<p style="text-align:center">
+		Website link:
+		<a
+			href="https://cal-cs184-student.github.io/hw-webpages-tarnish/final-project-proposal/index.html">https://cal-cs184-student.github.io/hw-webpages-tarnish/final-project-proposal/index.html</a>
+	</p>
+	<h2>
+		Title, Summary and Team Members
+	</h2>
+	<p>
+		Team Members: Julian Pearson Rickenbach, Mark Yuzon, Connor Armstrong and John Yoon
+	</p>
+	<p>
+		FlockForce is a project about making a GPU accelerated boid flocking
+		simulation. We will utilize the parallel computation power
+		of the GPU and exploit the data-level-parallelism of the 3D boids algorithm
+		to speed up a CPU based boids simulation and hopefully increase the number
+		of boids (particles) to hundreds of thousands or possibly millions. We will utilize the
+		open-source Godot Game Engine to handle inputs, windowing, and rendering.
+	</p>
+	<h2>
+		Problem Description
+	</h2>
+	<p>
+		Our chosen problem is the limited number of particles in a real-time-CPU-based boid
+		simulation. In order to create realistic and dynamic scenes involving large groups
+		of flocking particles (birds, fish), it is necessary to use the GPU in order to perform
+		the vast amount of calculations necessary to produce a realistic and visually pleasing simulation.
+	</p>
+	<p>
+		The challenge of this project lies in understanding the GPU's architecture, learning how to
+		interface with the device (GPU) and give it instructions from the host (CPU). In addition to learning
+		how to write effecient compute shaders, we will also need to consider which parts of our program
+		are parallelizable, which is also a design problem in the sense that if we relax our program requirements
+		we may be able to squeeze more simulatneous particles out of the GPU. Finally, we expect the
+		artistic styling of the simulation to be a challenge, as it involves 3D modelling, animation,
+		and rendering effects.
+	</p>
+	<h2>
+		Goals and Deliverables
+	</h2>
+	<p>
+		The goal is to increase the number of boids in our simulation without dropping frames or
+		losing visual fidelity. Either by offloading or parallelizing the boid simulation onto the GPU,
+		the simulation can scale. The simulation can then produce large, dynamic scenes that remain
+		responsive, and smooth.
+	</p>
+	<p>
+		For our deliverable we will create a demo scene of the real time boids simulation in Godot engine,
+		which should have at least an order of magnitude more boid particles than our CPU-based reference,
+		controlling for hardware. In addition we will supply a video of it working and instructions for
+		how to use our written code.
+	</p>
+	<p>
+		To measure the performance of our program we plan on primarily using
+		frames per seconds (FPS) statistics, frame time for CPU and GPU, number of active boid particles and
+		likely more statistics related to GPU dispatch calls and current hardware resources (i.e. number
+		of available GPGPU cores).
+	</p>
+	<p>
+		More sepcifically, for FPS stats we plan on at least using average FPS,
+		top 1% FPS, and bottom 1% FPS. For frame times we plan on measuring average frame time, CPU frame time,
+		and GPU frame time all in milliseconds (we will be hoping to target less than 16.66ms per frame total
+		which corresponds to 60 FPS). Further, we plan on judging the quality of our efforts by measuring
+		the number of boids that can be spawned while maintaining 60 FPS and 30 FPS on some target hardware.
+		We plan on testing these numbers on multiple hardware configurations including at least:
+		Apple M1 Pro SOC, Apple M2 Pro SOC, and intel i9 12th gen + Nvidia 3080ti with 32 GB DDR5 memory.
+	</p>
+	<p>
+		We plan to deliver a functioning 3D boids simulation that has all boid velocity updates running on the
+		GPU via compute shaders. We plan on finding the answer of how many boids we can run on our given target
+		hardware while maintaining interactivity (30 FPS minimum, 60 FPS ideally).
+	</p>
+	<p>
+		We hope to make our boids simulation more aesthetically pleasing if time permits. This includes:
+		adding extra layers to the simulation for example wind forces, making interesting visual effects via
+		fragment shaders. Also we hope to make our work more accessible by turning it into a
+		plugin for open-source Godot game engine.
+	</p>
+	<h2>
+		Schedule
+	</h2>
+	<h3>
+		Week 1:
+	</h3>
+	<p>
+		This will be the first time any of us are implementing compute shaders in any form. We expect this will
+		take a bit of getting used to, both studying the documentation and planning how we will parallelize our
+		simulation. We also plan to implement the boid simulation on the CPU this week, to serve as scaffolding
+		for when we start to use compute shaders. This will act as a sanity check and performance benchmark
+		for when we move the algorithm to the gpu in week 2.
+	</p>
+	<h3>
+		Week 2:
+	</h3>
+	<p>
+		This week we plan to expand on the work we did in week one to get boid simulation working with
+		compute shaders. By this point we will have had some time to get used to programming compute shaders
+		and will troubleshoot the output with a simple scene in godot without any art assets.
+	</p>
+	<h3>
+		Week 3:
+	</h3>
+	<p>
+		Scene building: making 3D art assets i.e. the boids and the environment. In week three we will
+		experiment with tuning the simulation to make it look as realistic as possible. We will design
+		and source any art assets and build the scene in godot.
+	</p>
+	<h3>
+		Week 4:
+	</h3>
+	<p>
+		Polish + stretch goals + finish website: We expect that by this point something will have gone
+		horribly wrong and will need fixing. To accommodate this we expect to have all the necessary parts of
+		our project finished by the time week four begins. If by some miracle this turns out to be true we
+		will continue to polish the scene. We want to make it large enough that you can really see the
+		scale of the flocking behavior. We will play around with the art assets, and modify them so they
+		best fit the scene. If time permits we will also add some other animated features to the scene to
+		add to its dynamism, as well as possibly experimenting with other fragment shaders to add to the
+		total look of our output. The other stretch goal we would like to accomplish is to build a godot
+		plugin so our compute shaders could be seamlessly added to other projects and scenes.
+	</p>
+	<h2>
+		Resources
+	</h2>
+	<p>
+	<ul>
+		<li>Craig Reynolds Boids Article: <a
+				href="https://www.red3d.com/cwr/boids/">https://www.red3d.com/cwr/boids/</a></li>
+		<li>navgen 3D boids simulation (archive):
+			<a
+				href="https://web.archive.org/web/20080205014305/http://www.navgen.com/3d_boids/">https://web.archive.org/web/20080205014305/http://www.navgen.com/3d_boids/</a>
+		</li>
+		<li>Lecture 17 Slides:
+			<a
+				href="https://cs184.eecs.berkeley.edu/sp25/assets/lectures/17-physical-simulation.pdf">https://cs184.eecs.berkeley.edu/sp25/assets/lectures/17-physical-simulation.pdf</a>
+		</li>
+		<li>Godot engine docs:
+			<a
+				href="https://docs.godotengine.org/en/latest/tutorials/shaders/compute_shaders.html">https://docs.godotengine.org/en/latest/tutorials/shaders/compute_shaders.html</a>
+		</li>
+		<li>Sebastian Lague boids video:
+			<a href="https://www.youtube.com/watch?v=bqtqltqcQhw">https://www.youtube.com/watch?v=bqtqltqcQhw</a>
+		</li>
+	</ul>
+	</p>
+</body>
+
 </html>
