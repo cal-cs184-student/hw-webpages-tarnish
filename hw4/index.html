@@ -51,36 +51,56 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Masses and springs</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>
+			In this part, we implemented a cloth simulation using a mass-spring system. The cloth is represented as a grid of masses connected by springs, where each mass can move freely in 3D space. The springs apply forces to the masses based on their rest lengths, simulating the tension and compression of the cloth.
+		</p>
+		<p> 
+			To initialize the cloth simulation, an evenly spaced grid of point masses must be generated, with dimensions defined by num_width_points and num_height_points, spanning the specified width and height, respectively. The coordinate placement of each point mass depends on the cloth's orientation: if set to HORIZONTAL, all point masses share a constant y value while varying over the xz plane; if VERTICAL, the z coordinate is perturbed with a small random offset between -1/1000 and 1/1000, while positions vary over the xy plane. This randomization can be achieved using a function such as rand(). The top-left point mass is placed at coordinate (0, 0), and the bottom-right at (width, height) within the defined plane.
+		</p>
+		<p>
+			Additionally, any point mass whose (x, y) index matches an entry in the pinned vector—representing the positions of pinned masses—should have its pinned attribute set to true. It is essential to store all point masses in the point_masses vector using row-major order (iterating along the x-axis first), as this ordering is required for correct rendering behavior.
+		</p>
+		<h3> Cloth wire frame at different point of views/angles.  </h3>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="images/1.1.png" width="400px"/>
+				  <figcaption>Wireframe view of cloth simulation at 3/4 point of view .</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="clothsim.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="images/1.2.png" width="400px"/>
+				  <figcaption>Wireframe view of cloth simulation at a top down point of view.</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 
+		<div style="margin-top: 30px;"></div>
+
+		<h3> Cloth wire with/without/with all shearing constraints</h3>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<img src="images/1.3.png" width="600px"/>
+				<figcaption>Without Shearing any shearing constraints.</figcaption>
+				<div style="margin-top: 50px;"></div>
+				
+				<img src="images/1.4.png" width="600px"/>
+				<figcaption>With Shearing constraints.</figcaption>
+				<div style="margin-top: 50px;"></div>
+				
+				<td style="text-align: center;">
+			  </tr>
+			  <img src="images/1.5.png" width="600px"/>
+			  <figcaption>With All Shearing Constraints.</figcaption>
+			  <td style="text-align: center;">
+			  <div style="margin-top: 50px;"></div>
+			</table>
+		</div>
+
+
 		<h2>Part 2: Simulation via numerical integration</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 		<h2>Part 3: Handling collisions with other objects</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
