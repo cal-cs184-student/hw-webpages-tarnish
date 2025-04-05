@@ -101,9 +101,85 @@
 
 
 		<h2>Part 2: Simulation via numerical integration</h2>
+		<h3> Exploring Simulations Parameters-Spring Constant ks</h3>
+		<p>
+			Changing ks changes the stiffness of the springs, and this in turn changes the behavior of the cloth surface by making it more or less taught. A low ks makes the cloth flow more easily. Decreasing the ks constant to an extremely low value doesn’t result in extremely strange behavior unlike moving ks in the opposite direction. This is because the maximum stretch distance constraint helps to keep the point masses at most 1.1 times the spring’s resting length apart, so they don’t fall apart completely. Increasing ks past a certain point causes the simulation to blow up, presumably because the spring forces are too great. The highest ks I could go without blowing up within the first second was ks=500,000. Starting at 220,000 the cloth starts to vibrate and oscillate. 
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<p>
+				If we increase the spring constant to 250,000 then these ripples appear in the fabric. If we increase ks any more it becomes unstable and oscilates. 
+			</p>
+			<img src="images/2.1.png" width="600px"/>
+			<figcaption>KS = 250,000.</figcaption>
+			
+			<p>
+				ks=300,000 (all other params kept default) Note that this configuration is perpetually in motion
+			</p>
+			<img src="images/2.2.png" width="600px"/>
+			<figcaption>KS = 250,000.</figcaption>
+		</div>
+
+
+
+		<div style="margin-top: 30px;"></div>
+		<h3> Exploring Simulations Parameters-damping</h3>
+		<p>
+			The density affects the weight of each particle which in turn affects how much the springs are able to pull the masses. Decreasing the density causes the springs to influence the point masses more, a similar effect to increasing the spring constant ks, which makes the fold in the cloth appear smoother. Increasing the density causes the folds in the cloth to increase in number and definition. Increasing the density past a certain point starts to make the cloth smooth again because the springs can’t properly affect the point masses. Decreasing the density below 0.35 g/cm^2 makes the cloth unstable using default parameters otherwise, and going even lower makes the simulation blow up. Increasing the density extremely doesn’t cause a blow up since having very high mass just makes the spring forces less effective.			
+		</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<p>
+				If we turn the damping down to zero, then the cloth swings back and forth for a while and experiences lots of little ripples in the surface of the fabric. 
+			</p>
+			<img src="images/2.5.png" width="600px"/>
+			<figcaption>damping = 0.</figcaption>
+			
+			<p>
+				With a damping of 1% the cloth falls very smoothly and slowly, here is a freeze frame from its initial decent: you can see how the surface is smooth while in motion, unlike the zero damping configuration above which experiences many little perturbations in the surface of the cloth. 
+			</p>
+			<img src="images/2.6.png" width="600px"/>
+			<figcaption>damping = 1%.</figcaption>
+		</div>
+
+
+		<div style="margin-top: 30px;"></div>
+		<h3> Exploring Simulations Parameters-density</h3>
+		<p>
+			Damping essentially changes the drag force that particles experience when moving through the world. A damping  value of 0% makes the cloth swing back and forward for a long time (a couple of minutes). Having any positive non-zero damping force causes the system to eventually come to rest. A very high damping force of 1% causes the cloth to fall quite slowly under the influence of gravity. 
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<p>
+				If we increase the density by 2 orders of magnitude, the number of folds in the cloth increase. Here the only parameter changed from default is density = 1500
+			</p>
+			<img src="images/2.3.png" width="600px"/>
+			<figcaption>density = 1500.</figcaption>
+			
+			<p>
+				And here is a low density of 1: you can see how there becomes no more folds in the fabric (seen in bottom right and left in the reference image below), which makes intuitive sense because if the fabric is lighter then the tension (springs) force of the threads is able to hold itself own weight more easily. 
+			</p>
+			<img src="images/2.4.png" width="600px"/>
+			<figcaption>density = 1.</figcaption>
+		</div>
+
+		<div style="margin-top: 30px;"></div>
+		<h3> shaded cloth from scene/pinned4.json in its final resting state </h3>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<img src="images/2.7.png" width="600px"/>
+			<figcaption>Final resting state.</figcaption>			
+		</div>
+
+
+
 
 		<h2>Part 3: Handling collisions with other objects</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+			To handle collisions between point masses and spheres we first check if the point mass is intersecting the sphere by taking the vector from the sphere origin to the point mass and if the length of that vector is less than the radius, the point lies inside the sphere. If the intersection is true, then we continue with the collision logic by calculating the point on the sphere’s surface in the direction of the point’s current position (this occurs after verlet integration in the simulation update step so the current position is the newly updated position). We then update the position of the point mass to be its last position plus the correction scaled by the inverse of the friction, where the correction is a vector pointing from the point mass’s last position to the surface point of the sphere calculated above. 
+		</p>
+
+		<p>
+			The plane collision handling requires a little more linear algebra but follows the same logic. We define collision with a plane to be that the current position of the point is on the other side of the plane with respect to the position of the point in the previous simulation step. This also implies that this logic goes after the verlet integration step in the simulation update function. We do this check by taking the dot product of the plane’s normal with the current and last positions and comparing their signs. If they are the same sign, then no collision occurred this frame. If the signs are different we proceed with the collision adjustment by using the ray-plane intersection equation (treating the last_position as the origin and the vector from last_position to position as the direction) to get the intersection point on the plane. Finally, we update the point mass’s current position the same way as we did in the sphere collision function, that is by adding the correction vector scaled by the friction coefficient to the point mass’s last position. 
+		</p>
 
 		<h2>Part 4: Handling self-collisions</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
